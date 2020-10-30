@@ -18,11 +18,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.myweatherforecast.android.MainActivity;
 import com.myweatherforecast.android.R;
 import com.myweatherforecast.android.WeatherActivity;
 import com.myweatherforecast.android.db.City;
 import com.myweatherforecast.android.db.Country;
 import com.myweatherforecast.android.db.Province;
+import com.myweatherforecast.android.gson.Weather;
 import com.myweatherforecast.android.util.HttpUtil;
 import com.myweatherforecast.android.util.Utility;
 
@@ -270,10 +272,24 @@ public class ChooseAreaFragment extends Fragment {
                 } else if (currentLevel == LEVEL_COUNTRY) {
                     //如何从省市县列表界面跳转到天气界面
                     String weatherId = countryList.get(position).getWeatherId();
-                    Intent intent = new Intent(getActivity(), WeatherActivity.class);
-                    intent.putExtra("weather_id", weatherId);//并把当前选中的天气id传递过去
-                    startActivity(intent);
-                    getActivity().finish();
+
+
+                    //判断出碎片是在MainActivity当中，还是在WeatherActivity当中。
+                    //如果是MainActivity当中，那么处理逻辑不变
+                    //如果在WeatherActivity当中，那么就关闭滑动菜单，显示下拉刷新进度条，然后请求新城市的天气信息
+                    if (getActivity() instanceof MainActivity) {//用instanceof 来判断一个对象是否属于某个类的实例
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weather_id", weatherId);//并把当前选中的天气id传递过去
+                        startActivity(intent);
+                        getActivity().finish();
+                    } else if (getActivity() instanceof WeatherActivity) {
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefreshLayout.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+
+                    }
+
 
                 }
             }

@@ -108,9 +108,6 @@ public class Utility {
             String WeatherContent = jsonArray.getJSONObject(0).toString();
 
 
-
-
-
             //由于之前已经按照上面的数据格式定义过相应的GSON实体类，因此只需要通过调用fromJson()方法
             //就能直接将JSON数据转为Weather对象了
             return new Gson().fromJson(WeatherContent, Weather.class);
