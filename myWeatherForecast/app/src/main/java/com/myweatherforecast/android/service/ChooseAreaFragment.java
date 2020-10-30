@@ -1,6 +1,7 @@
 package com.myweatherforecast.android.service;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.myweatherforecast.android.R;
+import com.myweatherforecast.android.WeatherActivity;
 import com.myweatherforecast.android.db.City;
 import com.myweatherforecast.android.db.Country;
 import com.myweatherforecast.android.db.Province;
@@ -29,6 +31,7 @@ import org.litepal.crud.DataSupport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -264,6 +267,14 @@ public class ChooseAreaFragment extends Fragment {
                 } else if (currentLevel == LEVEL_CITY) {
                     selectedCity = cityList.get(position);
                     queryCountries();
+                } else if (currentLevel == LEVEL_COUNTRY) {
+                    //如何从省市县列表界面跳转到天气界面
+                    String weatherId = countryList.get(position).getWeatherId();
+                    Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                    intent.putExtra("weather_id", weatherId);//并把当前选中的天气id传递过去
+                    startActivity(intent);
+                    getActivity().finish();
+
                 }
             }
         });
